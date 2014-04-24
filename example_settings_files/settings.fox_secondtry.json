@@ -1,0 +1,40 @@
+[ input ]
+fastq = /net/crate-04/data/burge/nlambert/bindNseqs/fox/130314BurA_D13-1171_NA_sequence.fastq
+mismatches_allowed_in_barcode = 1
+barcodes = ["ATCACG", "CGATGT", "CTTGTA","ACAGTG","GCCAAT", "CAGATC", "ACTTGA", "GATCAG", "TAGCTT", "GGCTAC"]
+
+[ parameters ]
+num_threads = 4
+read_len = 40
+experiment_name = Fox_40_second_try
+name_of_protein = FOX_second_try
+concentrations = [0, 1.5, 14, 40, 120, 365, 1100, 3300, 9800, 0]
+which_barcodes_to_sort_based_on = ["CAGATC"]
+poly_ic_conc =[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+input_rna = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000] 
+relevant_variables = []
+washes = [1, 1, 1, 1, 1, 1, 1,  1, 1, 1]
+temperature = ["37", "37", "37", "37", "37", "37", "37", "37", "37", "37"]
+trim_3p = 0
+library_seq_barcode = GGCTAC
+k_for_concordance_check = 6
+num_kmers_for_enrichment_humps = 20
+naive_count = True
+replaceative = False
+replaceative_num_top_kmers = 50
+streaming_counts = True
+ks_to_test_naive = [5, 6, 7]
+ks_to_test_replaceative = [5, 6, 7]
+ks_to_test_streaming = [5, 6, 7]
+ks_for_matlab = [6, 7]
+max_reads_to_split = 0
+known_motif = GCATG
+motifs_of_interest = ["TGCATG", "GCACG", "GCATG", "TGCACG", "TGCATGC"]
+free_energy_limits = [-40, -6, -4.1, -2.6, -1.2, 0]
+experiments_to_compare = ["settings.old_mbnl.json", "settings.fox10_3.json", "settings.old_fox.json", "settings.mbnl.json", "settings.cugbp.json", "settings.U1_2.json", "settings.U1.json", "settings.old_fox.json", "settings.fox.json", "settings.fox10_4.json"]
+force_stream_recount = False
+force_presence_recount = False
+
+[ output ]
+working_dir = /scratch/alexrson/Fox_40_second_try
+results_dir = /net/utr/data/atf/alexrson/bind_n_seq_pipeline/results/Fox_40_second_try
