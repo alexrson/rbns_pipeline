@@ -13,7 +13,6 @@ import subprocess
 
 import numpy as np
 from scipy import stats
-import tabix
 
 from table2dict import table2dict
 import readAttributes
@@ -36,12 +35,12 @@ def bin_of_list(things, bns_bin, n_bins):
 
 
 def list_file_type(in_dir, suffix):
-    
+
     files = os.listdir(in_dir)
     for f in files:
         if f.endswith(suffix):
             yield os.path.join(in_dir, f)
-    
+
 
 def monitor_percent(i, n, msg=''):
     percentage = 100 * i / n
@@ -163,7 +162,7 @@ def smooth_average(l):
     for i in range(1, len(l) - 1):
         newl[i] = (l[i - 1] + l[i] + l[i + 1]) / 3
     return newl
-    
+
 
 def log10(f):
     f = float(f)
@@ -224,7 +223,7 @@ def wait_for_jobs(job_list, sleep=10):
             if not num_left:
                 print completed
         time.sleep(sleep)
-    
+
 
 def fold_a_seq(seq):
     """
