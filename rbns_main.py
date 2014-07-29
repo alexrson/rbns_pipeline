@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 import os
 import argparse
@@ -43,7 +44,7 @@ class Bnse:
         rbns_utils.make_dir(self.rdir_path('tables'))
         for k, lib in itertools.product(self.settings.get_naiveks(), self.plibs):
             lib.calculate_enrichment(k, self.input_lib)
-    
+
     def do_counts(self):
         self.waiting_jobs = []
         print 'doing counts'
@@ -73,7 +74,7 @@ class Bnse:
                     most_enriched_lib = lib
                     best_enrich = max_enrich
             self.k2most_enriched_lib[k] = most_enriched_lib
-            
+
     def make_sure_counts_worked(self):
         max_reattempts = 2
         for pass_i in range(max_reattempts):
@@ -99,7 +100,7 @@ class Bnse:
                     if self.needs_calculation(lib_settings, count_type, k):
                         return False
         return True
-                
+
     def wait_for_jobs_to_complete(self, sleep=10):
         """
         Waits for the counts to be completed on the qsub.
@@ -204,7 +205,7 @@ class Bnse:
                 t_of.write(kmer + '\t')
                 t_of.write('\t'.join(
                   [str(lib.calcB(kmer)) for lib in self.plibs]) + '\n')
-            t_of.close() 
+            t_of.close()
 
     def compare_all_other_experiments(self):
         """
@@ -252,19 +253,19 @@ class Bnse:
               other_exp.plibs):
                 protein_conc_closeness_thresh = 10
                 if not rbns_utils.close_float_value(
-                  lib_main.get_conc(), 
-                  lib_other.get_conc(), 
+                  lib_main.get_conc(),
+                  lib_other.get_conc(),
                   protein_conc_closeness_thresh):
                     continue
                 print lib_main.get_conc(), lib_other.get_conc()
                 fig2 = plt.figure()
-                sp = fig2.add_subplot(1, 1, 1) 
+                sp = fig2.add_subplot(1, 1, 1)
                 main_enriches = lib_main.get_enrichments(k)
                 other_enriches = lib_other.get_enrichments(k)
                 thresh = np.mean(main_enriches) + 2 * np.std(main_enriches)
                 for x, y, kmer in zip(main_enriches, other_enriches, rbns_utils.yield_kmers(k)):
-                    sp.loglog(x,y,'.', 
-                      color=aColors.protein_colors(kmer, 
+                    sp.loglog(x,y,'.',
+                      color=aColors.protein_colors(kmer,
                         self.settings.get_property('protein_name'), x > thresh))
                 fig2.suptitle('Scatter plot of enrichments %imers for '
                   '[protein]=%g or %g' %
@@ -278,7 +279,7 @@ class Bnse:
                   'enrichment_correlation.%s.%.1f.nM.png'
                   % (other_exp.settings.get_property('experiment_name'),
                   lib_main.get_conc())))
-        
+
         # Scatter: SKA
         print 'scatter SKA'
         if True:
@@ -288,8 +289,8 @@ class Bnse:
                 fig3 = plt.figure()
                 sp = fig3.add_subplot(1, 1, 1)
                 if not rbns_utils.close_float_value(
-                  lib_main.get_conc(), 
-                  lib_other.get_conc(), 
+                  lib_main.get_conc(),
+                  lib_other.get_conc(),
                   protein_conc_closeness_thresh):
                     continue
                 fig3 = plt.figure()
@@ -300,21 +301,21 @@ class Bnse:
                 for x, y, kmer in zip(
                   main_kmer_libfracs, other_kmer_libfracs, rbns_utils.yield_kmers(k)):
                     sp.plot(x,y,'o',
-                            color=aColors.protein_colors(kmer, 
+                            color=aColors.protein_colors(kmer,
                             self.settings.get_property('protein_name'),
-                            x > 5./(4**k)))   
+                            x > 5./(4**k)))
                 sp.set_xlabel(r'SKA $F_{i}$ for '
-                  + self.settings.get_property('experiment_name') 
+                  + self.settings.get_property('experiment_name')
                   + ' [RBP]=%g' % lib_main.get_conc())
                 sp.set_ylabel(r'SKA $F_{i}$ for '
-                  + lib_other.get_property('experiment_name') 
+                  + lib_other.get_property('experiment_name')
                   + ' [RBP]=%g' % lib_other.get_conc())
                 sp.set_aspect(1.)
                 rbns_utils.simpleaxis(sp)
-                out_file = self.rdir_path('comparisons', 
-                  'SKA_comp_%s.%1.f.%.1f.nM.png' % 
-                  (other_exp.settings.get_property('experiment_name'), 
-                  lib_main.get_conc(), 
+                out_file = self.rdir_path('comparisons',
+                  'SKA_comp_%s.%1.f.%.1f.nM.png' %
+                  (other_exp.settings.get_property('experiment_name'),
+                  lib_main.get_conc(),
                   lib_other.get_conc()))
                 print 'saving ', out_file
                 fig3.savefig(out_file)
@@ -338,10 +339,10 @@ class Bnse:
                     continue
                 sp.loglog(rbns_utils.chris_formula(x, k, main_read_len),
                           rbns_utils.chris_formula(y, k, other_read_len),
-                          '.', 
+                          '.',
                           color=aColors.protein_colors(
-                            kmer, 
-                            self.settings.get_property('protein_name'), 
+                            kmer,
+                            self.settings.get_property('protein_name'),
                             x > thresh))
             sig_enriched = rbns_utils.significantly_enriched(
               main_enriches, zthresh=2., scale='log')
@@ -371,9 +372,9 @@ class Bnse:
         print 'Creating MATLAB inputs'
         for k in self.settings.get_property('ks_for_matlab'):
             assert isinstance(k, int)
-            kmer_list_file = self.rdir_path( 
+            kmer_list_file = self.rdir_path(
               'matlab', 'kmer_list.%i.m' % k)
-            kmer_count_file = self.rdir_path( 
+            kmer_count_file = self.rdir_path(
               'matlab', 'kmer_counts.%i.m' % k)
             rbns_utils.make_dir(os.path.dirname(kmer_list_file))
             kmer_list_f = open(kmer_list_file, 'w')
@@ -385,7 +386,7 @@ class Bnse:
                   for lib in [self.input_lib] + self.plibs]) + '\n')
             kmer_list_f.close()
             kmer_count_f.close()
-        protein_conc_file = self.rdir_path( 
+        protein_conc_file = self.rdir_path(
           'matlab', 'protein_conc.m')
         protein_conc_f = open(protein_conc_file, 'w')
         protein_conc_f.write('\t'.join([str(lib.get_conc()) for lib in [self.input_lib] + self.plibs]) + '\n')
@@ -505,10 +506,10 @@ class Bnse:
         for lib in self.libs:
             libfrac_motif = lib.get_stream_libfrac_kmer(motif)
             of.write('%s\t%0.3f\t%0.3f\t%i\t%f\n' %
-              (lib.get_barcode(), 
-              lib.get_conc(), 
-              lib.get_poly_ic(), 
-              lib.get_washes(), 
+              (lib.get_barcode(),
+              lib.get_conc(),
+              lib.get_poly_ic(),
+              lib.get_washes(),
               libfrac_motif))
         of.close()
 
@@ -546,7 +547,7 @@ class Bnse:
         for k, lib in itertools.product(ks_in_both, self.plibs):
             fig1 = plt.figure(figsize=(5, 7))
             sp = fig1.add_subplot(211)
-            out_plot = self.rdir_path( 
+            out_plot = self.rdir_path(
               'plots', 'count_compare.naive_stream.%i.%g' % (k, lib.get_conc()))
             xs = lib.get_enrichments(k)
             ys = lib.get_stream_libfracs(k)
@@ -565,7 +566,7 @@ class Bnse:
         for k, lib in itertools.product(ks_in_both, self.plibs):
             fig1 = plt.figure(figsize=(5, 7))
             sp = fig1.add_subplot(211)
-            out_plot = self.rdir_path( 
+            out_plot = self.rdir_path(
               'plots', 'count_compare.naive_presence.%i.%g' % (k, lib.get_conc()))
             xs = lib.get_enrichments(k)
             ys = lib.get_presence_fracs(k)
@@ -586,7 +587,7 @@ class Bnse:
         for k, lib in itertools.product(self.settings.get_property('ks_to_test_stream'), self.plibs):
             fig1 = plt.figure(figsize=(5, 7))
             sp = fig1.add_subplot(211)
-            out_plot = self.rdir_path( 
+            out_plot = self.rdir_path(
               'plots', 'count_compare.presence_stream.%i.%g' % (k, lib.get_conc()))
             xs = lib.get_presence_fracs(k)
             ys = lib.get_stream_libfracs(k)
@@ -607,7 +608,7 @@ class Bnse:
         for k in self.settings.get_property('ks_to_test_naive'):
             fig1 = plt.figure(figsize=(7, 7))
             sp = fig1.add_subplot(211)
-            kmers_of_interest = [kmer 
+            kmers_of_interest = [kmer
               for kmer in self.settings.get_property('motifs_of_interest') if len(kmer) == k]
             legend_handles = []
             rand = {6:500, 7:3015, 5:129, 4:31, 8:8000, 9:32000, 10: 128000, 3:7}
@@ -631,9 +632,9 @@ class Bnse:
                 else:
                     color = aColors.ERSP_colors(kmer, True)
                 l, = sp.plot(xvals,
-                        enrichments, 
-                        'o-', 
-                        color=color, 
+                        enrichments,
+                        'o-',
+                        color=color,
                         label=kmer)
                 legend_handles.append(l)
             labels = [lib.get_full_label() for lib in self.libs]
@@ -654,7 +655,7 @@ class Bnse:
             rbns_utils.save_fig(fig1, out_plot)
             sp.legend(legend_handles,
                       map(rna, kmers_of_interest),
-                      mode='expand', 
+                      mode='expand',
                       loc=2,
                       borderaxespad=-2.)
             out_plot = self.rdir_path(
@@ -671,7 +672,7 @@ class Bnse:
         for k in self.settings.get_property('ks_to_test_naive'):
             fig1 = plt.figure(figsize=(5, 7))
             sp = fig1.add_subplot(211)
-            kmers_of_interest = [kmer 
+            kmers_of_interest = [kmer
               for kmer in self.settings.get_property('motifs_of_interest') if len(kmer) == k]
             legend_handles = []
             for ranki, kmer in enumerate(kmers_of_interest):
@@ -690,8 +691,8 @@ class Bnse:
                 try:
                     l, = sp.semilogy(xvals,
                             B_values,
-                            'o-', 
-                            color=color, 
+                            'o-',
+                            color=color,
                             label=kmer)
                     legend_handles.append(l)
                 except:
@@ -704,12 +705,12 @@ class Bnse:
             rbns_utils.simpleaxis(sp)
             fig1.suptitle(self.settings.get_property('experiment_name') + (' k=%i' % k),
               verticalalignment='baseline')
-            out_plot = self.rdir_path( 
+            out_plot = self.rdir_path(
               'plots', 'relative_affinity_humps.kmersofinterest.%i.nolegend' % k)
             rbns_utils.save_fig(fig1, out_plot)
             sp.legend(legend_handles,
                       map(rna, kmers_of_interest),
-                      mode='expand', 
+                      mode='expand',
                       loc=2,
                       borderaxespad=-2.)
             out_plot = self.rdir_path(
@@ -725,7 +726,7 @@ class Bnse:
         for k in self.settings.get_property('ks_to_test_stream'):
             fig1 = plt.figure(figsize=(5, 7))
             sp = fig1.add_subplot(211)
-            kmers_of_interest = [kmer 
+            kmers_of_interest = [kmer
               for kmer in self.settings.get_property('motifs_of_interest') if len(kmer) == k]
             legend_handles = []
             rand = {6:500, 7:3015, 5:129, 4:31, 8:8000}
@@ -748,9 +749,9 @@ class Bnse:
                 else:
                     color = aColors.ERSP_colors(kmer, True)
                 l, = sp.plot(xvals,
-                        enrichments, 
-                        'o-', 
-                        color=color, 
+                        enrichments,
+                        'o-',
+                        color=color,
                         label=kmer)
                 legend_handles.append(l)
             labels = [lib.get_full_label() for lib in self.libs]
@@ -770,7 +771,7 @@ class Bnse:
             rbns_utils.save_fig(fig1, out_plot)
             sp.legend(legend_handles,
                       map(rna, kmers_of_interest),
-                      mode='expand', 
+                      mode='expand',
                       loc=2,
                       borderaxespad=-2.)
             out_plot = self.rdir_path(
@@ -786,7 +787,7 @@ class Bnse:
         for k in self.settings.get_property('ks_to_test_stream'):
             fig1 = plt.figure(figsize=(5, 7))
             sp = fig1.add_subplot(211)
-            kmers_of_interest = [kmer 
+            kmers_of_interest = [kmer
               for kmer in self.settings.get_property('motifs_of_interest') if len(kmer) == k]
             legend_handles = []
             rand = {6:500, 7:3015, 5:129, 4:31, 8:8000}
@@ -809,8 +810,8 @@ class Bnse:
                     color = aColors.ERSP_colors(kmer, True)
                 l, = sp.plot(xvals,
                         presences,
-                        'o-', 
-                        color=color, 
+                        'o-',
+                        color=color,
                         label=kmer)
                 legend_handles.append(l)
             labels = [lib.get_full_label() for lib in self.libs]
@@ -825,15 +826,15 @@ class Bnse:
                     pass
             fig1.suptitle(self.settings.get_property('experiment_name') + (' k=%i' % k),
               verticalalignment='baseline')
-            out_plot = self.rdir_path( 
+            out_plot = self.rdir_path(
               'plots', 'presence_humps.kmersofinterest.%i.nolegend' % k)
             rbns_utils.save_fig(fig1, out_plot)
             sp.legend(legend_handles,
                       map(rna, kmers_of_interest),
-                      mode='expand', 
+                      mode='expand',
                       loc=2,
                       borderaxespad=-2.)
-            out_plot = self.rdir_path( 
+            out_plot = self.rdir_path(
               'plots', 'presence_humps.kmersofinterest.%i.withlegend' % k)
             print 'saving', out_plot
             rbns_utils.save_fig(fig1, out_plot)
@@ -859,8 +860,8 @@ class Bnse:
             spearmanr, spearmanp = scipy.stats.spearmanr(
               libi_presences, libj_presences)
             new_concordance_of.write('%s\t%s\t%g\t%g\t%g\t%g\n' %
-              (libi.get_barcode(), libj.get_barcode(), 
-              libi.get_conc(), libj.get_conc(), 
+              (libi.get_barcode(), libj.get_barcode(),
+              libi.get_conc(), libj.get_conc(),
               spearmanr, spearmanp))
         new_concordance_of.close()
 
@@ -885,8 +886,8 @@ class Bnse:
             spearmanr, spearmanp = scipy.stats.spearmanr(
               libi_presences, libj_presences)
             new_concordance_of.write('%s\t%s\t%g\t%g\t%g\t%g\n' %
-              (libi.get_barcode(), libj.get_barcode(), 
-              libi.get_conc(), libj.get_conc(), 
+              (libi.get_barcode(), libj.get_barcode(),
+              libi.get_conc(), libj.get_conc(),
               spearmanr, spearmanp))
         new_concordance_of.close()
 
@@ -1037,13 +1038,13 @@ class Bnse:
         protein = self.settings.get_property('protein_name').upper()
         for k in self.settings.get_property('ks_to_test_naive'):
             for lib in self.plibs:
-                hist_file = self.rdir_path( 
+                hist_file = self.rdir_path(
                   'plots',
                   'stacked.hist.%i.%0.0f' % (k, lib.get_conc()))
                 print 'working on ', hist_file
                 fig1 = plt.figure(figsize=(6, 5))
                 fig2 = plt.figure(figsize=(6, 5))
-                sp = fig1.add_subplot(1, 1, 1) 
+                sp = fig1.add_subplot(1, 1, 1)
                 sp2 = fig2.add_subplot(1, 1, 1)
                 rbns_utils.simpleaxis(sp)
                 rbns_utils.simpleaxis(sp2)
@@ -1053,11 +1054,11 @@ class Bnse:
                 sp.axvline(thresh, color='black')
                 sp2.axvline(thresh, color='black')
                 highest = stacked_bar_kmers.plot_stack(sp, bin_edges, lib.get_enrichments(k), k, protein)
-                highest2 = stacked_bar_kmers.plot_stack(sp2, 
-                                             bin_edges, 
-                                             lib.get_enrichments(k), 
-                                             k, 
-                                             protein, 
+                highest2 = stacked_bar_kmers.plot_stack(sp2,
+                                             bin_edges,
+                                             lib.get_enrichments(k),
+                                             k,
+                                             protein,
                                              scale='log')
                 assert highest == highest2
                 sp.set_xlabel('RBNS R value')
@@ -1066,7 +1067,7 @@ class Bnse:
                 sp2.set_ylabel('number of %imers'% k)
                 if k == 5 and 'FOX' in self.settings.get_property('protein_name').upper():
                     supt = 'GCATG: %0.2f, GCACG: %0.2f'\
-                      % (lib.get_enrichments(k)[rbns_utils.get_index_from_kmer('GCATG')], 
+                      % (lib.get_enrichments(k)[rbns_utils.get_index_from_kmer('GCATG')],
                       lib.get_enrichments(k)[rbns_utils.get_index_from_kmer('GCACG')])
                     fig1.suptitle(supt)
                     fig2.suptitle(supt)
@@ -1086,7 +1087,7 @@ class Bnse:
                         sp2.set_xticks([0, 1, 2, 4, 6, 8, 10])
                 if k == 6 and 'FOX' in protein:
                     supt = 'TGCATG: %0.2f, TGCACG: %0.2f'\
-                      % (lib.get_enrichments(k)[rbns_utils.get_index_from_kmer('TGCATG')], 
+                      % (lib.get_enrichments(k)[rbns_utils.get_index_from_kmer('TGCATG')],
                       lib.get_enrichments(k)[rbns_utils.get_index_from_kmer('TGCACG')])
                     sp.set_xlim([0, 25])
                     sp2.set_xlim([0, 25])
@@ -1169,13 +1170,13 @@ class Bnse:
                 lib.split_by_structure(False)
         if self.counts_on_cluster:
             self.wait_for_jobs_to_complete()
-    
+
     def count_fold_split(self):
         # count split reads
         for barcode, (energy_bin_i, energy_bin) in \
           itertools.product(self.settings.get_property('barcodes'),
           enumerate(self.settings.get_property('energy_bins'))):
-            results_file =self.rdir_path( 
+            results_file =self.rdir_path(
               'structure',
               '%s.%i.%0.1f_%0.1f.ncount.pkl' %
               (barcode,
@@ -1190,7 +1191,7 @@ class Bnse:
         for barcode, (energy_bin_i, energy_bin) in \
           itertools.product(self.settings.get_property('barcodes'),
             enumerate(self.settings.get_property('energy_bins'))):
-            results_file = self.rdir_path( 
+            results_file = self.rdir_path(
               'structure',
               '%s.%i.%0.1f_%0.1f.ncount.pkl' %
               (barcode,
@@ -1214,7 +1215,7 @@ class Bnse:
         for barcode, (energy_bin_i, energy_bin) in \
           itertools.product(self.settings.get_property('barcodes'),
             enumerate(self.settings.get_property('energy_bins'))):
-            results_file = self.rdir_path( 
+            results_file = self.rdir_path(
               'structure',
               '%s.%i.%0.1f_%0.1f.ncount.pkl' %
               (barcode,
@@ -1228,7 +1229,7 @@ class Bnse:
               cPickle.load(open(results_file))
         k_lib_ebin2total_counts = self.get_ebin_counts()
         for k in self.settings.get_property('ks_to_test_naive'):
-            results_file = self.rdir_path( 
+            results_file = self.rdir_path(
               'analyses',
               'ebin_enrichments.%i.txt' % k)
             of = open(results_file, 'w')
@@ -1270,7 +1271,7 @@ class Bnse:
                     of.write('\t%0.4f' % enrichment)
                 of.write('\n')
             of.close()
-            results_file = self.rdir_path( 
+            results_file = self.rdir_path(
               'analyses',
               'energy_enrichments.%i.pkl' % k)
             cPickle.dump(barcode2ebini2kmer2enrichment,
@@ -1280,7 +1281,7 @@ class Bnse:
         """
         returns the total number of reads in each energy bin
         """
-        ebin_counts_file = self.rdir_path( 
+        ebin_counts_file = self.rdir_path(
           'analyses', 'ebin_counts.pkl')
         if rbns_utils.file_exists(ebin_counts_file):
             k_lib_ebin2total_counts = cPickle.load(open(ebin_counts_file))
