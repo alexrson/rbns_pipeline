@@ -6,7 +6,7 @@ import math
 import aUtils
 import aColors
 #from bind_n_seq_pipeline import yield_kmers
-import bind_n_seq_pipeline
+import rbns_utils
 
 def plot_stack(sp, bin_edges, enrichments, k, protein, scale='linear', thresh='2sig'):
     assert scale in ['linear', 'log']
@@ -16,7 +16,7 @@ def plot_stack(sp, bin_edges, enrichments, k, protein, scale='linear', thresh='2
     for bin_left, bin_right in aUtils.pairwise(bin_edges):
         color2height = collections.Counter()
         width = bin_right - bin_left
-        for (kmeri, kmer), enrichment in zip(enumerate(bind_n_seq_pipeline.yield_kmers(k)), enrichments):
+        for (kmeri, kmer), enrichment in zip(enumerate(rbns_utils.yield_kmers(k)), enrichments):
             if enrichment > bin_right or enrichment < bin_left:
                 continue
             color = aColors.protein_colors(kmer, protein, enrichment >= thresh)
@@ -39,7 +39,7 @@ def plot_stack(sp, bin_edges, enrichments, k, protein, scale='linear', thresh='2
                 bottom += color2height[color]
         bottoms.append(bottom)
     return max(bottoms)
-            
+
 
 if __name__ == '__main__':
     bin_edges = [0, 1, 2, 3, 4]

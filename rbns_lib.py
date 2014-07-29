@@ -6,7 +6,6 @@ import rbns_cluster_utils
 import cPickle
 import rbns_utils
 import numpy as np
-import calculate_kds_importable
 
 class RBNS_Lib:
     def __init__(self, experiment_settings, lib_settings):
@@ -112,7 +111,7 @@ class RBNS_Lib:
 
     def compare_top_kmers(self, k, most_enriched_lib, num_top_kmers_to_comp):
         """
-        compares the enrichment of the top kmers in this library to another 
+        compares the enrichment of the top kmers in this library to another
         library (usually the most enriched one).
 
         Returns pearsonr
@@ -132,7 +131,7 @@ class RBNS_Lib:
         returns the top kmers by enrichment in this library
         """
         top_kmer_file = os.path.join(self.get_rdir(), 'analyses',
-          'top_kmers.%i.%s.%i.pkl' % 
+          'top_kmers.%i.%s.%i.pkl' %
           (k, self.get_barcode(), num_top_kmers_to_compare))
         if os.path.exists(top_kmer_file):
             sorted_kmers = cPickle.load(open(top_kmer_file))
@@ -168,7 +167,7 @@ class RBNS_Lib:
           'temp': 'T', 'barcode': 'barcode'}
         rv2val = {'input_rna': self.lib_settings.get_rna_conc(),
                   'poly_ic': self.get_poly_ic(),
-                  'temp': self.get_temperature(), 
+                  'temp': self.get_temperature(),
                   'barcode': self.get_barcode()}
         for rv in self.experiment_settings.get_property('relevant_variables', []):
             out += '%s: %s, ' % (rv2desc[rv], str(rv2val[rv]))
@@ -269,10 +268,10 @@ class RBNS_Lib:
         returns the full path of this library's split reads file
         """
         split_reads_file = os.path.join(
-          self.get_rdir(), 
+          self.get_rdir(),
           'split_reads',
           '%s_%s.reads' % (
-          self.experiment_settings.get_property('protein_name'), 
+          self.experiment_settings.get_property('protein_name'),
           self.get_barcode()))
         assert split_reads_file == self.lib_settings.get_split_reads()
         return self.lib_settings.get_split_reads()
@@ -304,7 +303,7 @@ class RBNS_Lib:
           (self.get_wdir(), self.get_wdir(), self.get_split_reads(),
           tmp_file, tmp_file,
           tmp_file_out, err_file,
-          tmp_file_out, 
+          tmp_file_out,
           os.path.join(self.get_rdir(), 'structure'),
           out_file)
         if not launch:
@@ -318,8 +317,8 @@ class RBNS_Lib:
               'queue': 'long', 'workingdir': self.get_rdir(),
               'command': command}
             return rbns_cluster_utils.launch(
-              command, 
-              script_options, 
+              command,
+              script_options,
               error_dir=self.experiment_settings.get_property('error_dir'))
 
     def split_by_structure(self, launch=False):
@@ -339,7 +338,7 @@ class RBNS_Lib:
           for i, (dG1, dG2) in enumerate(self.experiment_settings.get_property('energy_bins'))]
         rbns_utils.make_dir(os.path.dirname(out_files[0]))
         if all(map(rbns_utils.file_exists, out_files)):
-            return 
+            return
         if launch:
             return rbns_cluster_utils.launch_energy_splitter(self.lib_settings, self.experiment_settings)
         else:
@@ -356,7 +355,7 @@ class RBNS_Lib:
 
     def calcB(self, kmer):
         """
-         calculates the B value 
+         calculates the B value
         """
         read_len = self.experiment_settings.get_property('read_len')
         return self.type2k2counts['naive'][len(kmer)].get_B_kmer(kmer, read_len)
@@ -372,7 +371,7 @@ class RBNS_profile:
         if self.count_type == 'naive' or self.count_type == 'stream':
             self.calculate_libfracs()
             assert 0.99 < sum(self.libfrac) < 1.01
-    
+
     def kmer_value(self, kmer):
         kmeri = rbns_utils.get_index_from_kmer(kmer)
         return self.kmeri_value(kmeri)
@@ -418,7 +417,7 @@ class RBNS_profile:
 
     def get_profile(self):
         return self.profile
-    
+
     def save_enrichments(self, enrich_pkl):
         cPickle.dump(self.enrichments, open(enrich_pkl, 'wb'))
 
@@ -440,11 +439,11 @@ class RBNS_profile:
 
     def get_enrichment_dict(self):
         assert len(self.enrichments) == 4 ** self.k
-        return {kmer: enrich 
-                for kmer, enrich in 
+        return {kmer: enrich
+                for kmer, enrich in
                 zip(rbns_utils.yield_kmers(self.k),
                 self.enrichments)}
- 
+
 
 def norm_libfracs(profile, input_profile):
     assert profile.k == input_profile.k
@@ -460,9 +459,9 @@ def run_energy_splitter(lib_settings, experiment_settings):
     energy_bins = str(experiment_settings.get_property('free_energy_limits'))
     error_dir = experiment_settings.get_property('error_dir')
     rbns_cluster_utils.energy_splitter_commandline(
-      barcode, 
-      rdir, 
-      reads_file, 
-      energy_file, 
-      energy_bins, 
+      barcode,
+      rdir,
+      reads_file,
+      energy_file,
+      energy_bins,
       error_dir)
