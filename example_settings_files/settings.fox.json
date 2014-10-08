@@ -4,7 +4,6 @@ mismatches_allowed_in_barcode = 1
 barcodes = ["ATCACG", "CGATGT", "TTAGGC", "TGACCA", "ACAGTG", "GCCAAT", "CAGATC", "ACTTGA", "GATCAG", "TAGCTT", "GGCTAC"]
 
 [ parameters ]
-num_threads = 4
 read_len = 40
 experiment_name = Fox_40
 name_of_protein = FOX
@@ -18,23 +17,20 @@ temperature = ["37", "37", "37", "37", "37", "37", "37", "37", "37", "37", "37"]
 trim_3p = 0
 library_seq_barcode = GGCTAC
 k_for_concordance_check = 6
-num_kmers_for_enrichment_humps = 20
+num_kmers_for_enrichment_curves = 20
 naive_count = True
-replaceative = False
-replaceative_num_top_kmers = 50
 streaming_counts = True
 ks_to_test_naive = [5, 6, 7]
-ks_to_test_replaceative = [6]
 ks_to_test_streaming = [5, 6, 7]
 ks_for_matlab = [6, 7]
+force_stream_recount = False
+force_presence_recount = False
 max_reads_to_split = 0
 known_motif = TGCATG
 motifs_of_interest = ["TGCATG", "GCACG", "GCATG", "TGCACG", "TGCATGC"]
 free_energy_limits = [-40, -6, -4.1, -2.6, -1.2, 0]
 zexperiments_to_compare = ["settings.old_mbnl.json", "settings.mbnl.json", "settings.cugbp.json", "settings.U1_2.json", "settings.U1.json", "settings.old_fox.json", "settings.fox_secondtry.json", "settings.fox10_4.json"]
 experiments_to_compare = ["settings.fox10_4.json"]
-force_stream_recount = False
-force_presence_recount = False
 
 [ output ]
 working_dir = /scratch/alexrson/Fox_40/

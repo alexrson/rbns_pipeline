@@ -52,11 +52,11 @@ class RBNS_settings:
     def iter_lib_settings(self):
         for i in range(len(self.barcodes)):
             yield RBNS_lib_settings(self,
-              self.barcodes[i], 
-              self.settings['concentrations'][i], 
-              self.settings['poly_ic_conc'][i], 
-              self.settings['input_rna'][i], 
-              self.settings['washes'][i], 
+              self.barcodes[i],
+              self.settings['concentrations'][i],
+              self.settings['poly_ic_conc'][i],
+              self.settings['input_rna'][i],
+              self.settings['washes'][i],
               self.settings['temperature'][i])
 
     def process_settings(self, settings_file):
@@ -67,13 +67,13 @@ class RBNS_settings:
         int_keys = ['read_len',
           'mismatches_allowed_in_barcode', 'trim_3p', 'max_reads_to_split',
           'k_for_concordance_check',
-          'num_kmers_for_enrichment_humps']
+          'num_kmers_for_enrichment_curves']
         float_keys = []
         boolean_keys = ['naive_count', 'stream_count', 'force_stream_recount', 'force_presence_recount', 'force_naive_recount']
         list_str_keys = ['barcodes', 'barcodes_for_sorting',
           'temperature', 'relevant_variables', 'experiments_to_compare',
           'motifs_of_interest']
-        list_int_keys = ['ks_to_test_stream','ks_to_test_presence', 
+        list_int_keys = ['ks_to_test_stream','ks_to_test_presence',
           'ks_to_test_naive', 'ks_for_matlab', 'washes']
         list_float_keys = ['concentrations', 'poly_ic_conc',
           'free_energy_limits', 'input_rna']
@@ -131,7 +131,7 @@ class RBNS_settings:
             raise ValueError('bad input')
         self.protein_name = settings['protein_name']
         if settings['stream_count'] and not set(settings['ks_to_test_stream']).issubset(
-          settings['ks_to_test_naive']): 
+          settings['ks_to_test_naive']):
             raise ValueError('All ks for stream must also be in naive')
 
     def check_barcode_lens(self):
@@ -179,13 +179,13 @@ class RBNS_lib_settings:
 
     def get_conc(self):
         return self.conc
-    
+
     def counts_file(self, count_type, k):
         counts_file = os.path.join(
           self.experiment_settings.get_rdir(),
           'counts',
           count_type,
-          '%(protein)s_%(barcode)s_%(k)i.pkl' % 
+          '%(protein)s_%(barcode)s_%(k)i.pkl' %
           {'barcode': self.barcode,
            'protein': self.experiment_settings.get_property('protein_name'),
            'k': int(k)})
@@ -206,6 +206,6 @@ class RBNS_lib_settings:
     def split_reads_exist(self):
         split_reads = self.get_split_reads()
         return rbns_utils.file_exists(split_reads)
-        
+
 
 

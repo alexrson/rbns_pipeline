@@ -137,6 +137,10 @@ class RBNS_Lib:
             sorted_kmers = cPickle.load(open(top_kmer_file))
             if len(top_kmer_file) == num_top_kmers_to_compare:
                 return sorted_kmers
+        else:
+            # make analysis dir
+            if not os.path.exists(os.path.dirname(top_kmer_file)):
+                os.makedirs(os.path.dirname(top_kmer_file))
         enrich_kmers = zip(self.get_enrichments(k), range(4 ** k))
         enrich_kmers.sort(reverse=True)
         enrich_kmers = enrich_kmers[:num_top_kmers_to_compare]
@@ -295,6 +299,8 @@ class RBNS_Lib:
           ' %s with concentration %0.1f' % (self.get_barcode(), self.get_conc())
         tmp_file = os.path.join(self.get_wdir(), '%s.reads' % self.get_barcode())
         tmp_file_out = os.path.join(self.get_wdir(), '%s.fe' % self.get_barcode())
+        if not os.path.exists(self.experiment_settings.get_property('error_dir')):
+            os.makedirs(self.experiment_settings.get_property('error_dir'))
         err_file = os.path.join(
           self.experiment_settings.get_property('error_dir'),
           '%s.err' % self.get_barcode())

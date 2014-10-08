@@ -32,6 +32,7 @@ def iter_RNAfold_output(energy_file):
     iterates through RNAfold input and returns an energy iterator
     """
     for l1, l2 in iterLinePairs(energy_file):
+        print energy_file, l1, l2
         yield float(l2.split(' (')[1].replace(')', ''))
 
 

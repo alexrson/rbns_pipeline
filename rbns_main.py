@@ -182,16 +182,16 @@ class Bnse:
         self.make_enrichment_hist_stacked()
         self.plot_k_picker()
         self.plot_concordance_to_most_enriched()
-        self.plot_enrichment_humps()
-        self.plot_enrichment_humps_with_secondary()
-        self.plot_relativeAffinity_humps_with_secondary()
-        self.plot_enrichment_humps_with_secondary_stream()
-        self.plot_enrichment_humps_with_secondary_presence()
+        self.plot_enrichment_curves()
+        self.plot_enrichment_curves_with_secondary()
+        self.plot_relativeAffinity_curves_with_secondary()
+        self.plot_enrichment_curves_with_secondary_stream()
+        self.plot_enrichment_curves_with_secondary_presence()
         self.plot_enrichment_v_stream()
         self.plot_enrichment_v_presence()
         self.plot_presence_v_stream()
         if '--all-tasks' in sys.argv or '--structure-calculations' in sys.argv:
-            self.plot_fold_split_hump()
+            self.plot_fold_split_curve()
 
     def make_Btable(self):
         """
@@ -216,6 +216,7 @@ class Bnse:
             if not os.path.isabs(alt_settings_file):
                 alt_settings_file =\
                   os.path.join(os.getcwd(), alt_settings_file)
+            print alt_settings_file
             assert rbns_utils.file_exists(alt_settings_file)
             alt_settings = rbns_settings.RBNS_settings(alt_settings_file)
             self.compare_to_other_BNS(alt_settings)
@@ -514,7 +515,7 @@ class Bnse:
         of.close()
 
 
-    def plot_enrichment_humps(self):
+    def plot_enrichment_curves(self):
         """
         plots the enrichment of the top kmers into a pdf
         """
@@ -522,7 +523,7 @@ class Bnse:
             fig1 = plt.figure()
             sp = fig1.add_subplot(111)
             for kmer_i in self.naively_sorted_kmers[k][0:
-              self.settings.get_property('num_kmers_for_enrichment_humps')]:
+              self.settings.get_property('num_kmers_for_enrichment_curves')]:
                 enrichments = [lib.get_enrichments(k)[kmer_i]
                                     for lib in self.plibs]
                 sp.plot(range(len(self.plibs)),
@@ -539,7 +540,7 @@ class Bnse:
             sp.set_xticklabels(labels, rotation=45)
             sp.set_ylabel('R value')
             fig1.suptitle(self.settings.get_property('experiment_name') + (' k=%i' % k))
-            rbns_utils.save_fig(fig1,self.rdir_path('plots', 'enrichment_humps.%i.png' % k))
+            rbns_utils.save_fig(fig1,self.rdir_path('plots', 'enrichment_curves.%i.png' % k))
 
     def plot_enrichment_v_stream(self):
         ks_in_both = set(self.settings.get_property('ks_to_test_naive')) &\
@@ -600,7 +601,7 @@ class Bnse:
             print out_plot
             rbns_utils.save_fig(fig1, out_plot)
 
-    def plot_enrichment_humps_with_secondary(self):
+    def plot_enrichment_curves_with_secondary(self):
         """
         plots the enrichment of the top kmers into a pdf
         """
@@ -651,7 +652,7 @@ class Bnse:
             fig1.suptitle(self.settings.get_property('experiment_name') + (' k=%i' % k),
               verticalalignment='baseline')
             out_plot = self.rdir_path(
-              'plots', 'enrichment_humps.kmersofinterest.%i.nolegend' % k)
+              'plots', 'enrichment_curves.kmersofinterest.%i.nolegend' % k)
             rbns_utils.save_fig(fig1, out_plot)
             sp.legend(legend_handles,
                       map(rna, kmers_of_interest),
@@ -659,15 +660,15 @@ class Bnse:
                       loc=2,
                       borderaxespad=-2.)
             out_plot = self.rdir_path(
-              'plots', 'enrichment_humps.kmersofinterest.%i.withlegend' % k)
+              'plots', 'enrichment_curves.kmersofinterest.%i.withlegend' % k)
             print 'saving', out_plot
             rbns_utils.save_fig(fig1, out_plot)
 
-    def plot_relativeAffinity_humps_with_secondary(self):
+    def plot_relativeAffinity_curves_with_secondary(self):
         """
         plots the enrichment of the top kmers into a pdf
         """
-        print 'plotting relative affinity humps'
+        print 'plotting relative affinity curves'
         xvals = [max(0, math.log(lib.get_conc() + .00001)) for lib in self.plibs]
         for k in self.settings.get_property('ks_to_test_naive'):
             fig1 = plt.figure(figsize=(5, 7))
@@ -706,7 +707,7 @@ class Bnse:
             fig1.suptitle(self.settings.get_property('experiment_name') + (' k=%i' % k),
               verticalalignment='baseline')
             out_plot = self.rdir_path(
-              'plots', 'relative_affinity_humps.kmersofinterest.%i.nolegend' % k)
+              'plots', 'relative_affinity_curves.kmersofinterest.%i.nolegend' % k)
             rbns_utils.save_fig(fig1, out_plot)
             sp.legend(legend_handles,
                       map(rna, kmers_of_interest),
@@ -714,11 +715,11 @@ class Bnse:
                       loc=2,
                       borderaxespad=-2.)
             out_plot = self.rdir_path(
-              'plots', 'relative_affinity_humps.kmersofinterest.%i.withlegend' % k)
+              'plots', 'relative_affinity_curves.kmersofinterest.%i.withlegend' % k)
             print 'saving', out_plot
             rbns_utils.save_fig(fig1, out_plot)
 
-    def plot_enrichment_humps_with_secondary_stream(self):
+    def plot_enrichment_curves_with_secondary_stream(self):
         """
         plots the enrichment of the top kmers into a pdf
         """
@@ -767,7 +768,7 @@ class Bnse:
             fig1.suptitle(self.settings.get_property('experiment_name') + (' k=%i' % k),
               verticalalignment='baseline')
             out_plot = self.rdir_path(
-              'plots', 'stream_humps.kmersofinterest.%i.nolegend' % k)
+              'plots', 'stream_curves.kmersofinterest.%i.nolegend' % k)
             rbns_utils.save_fig(fig1, out_plot)
             sp.legend(legend_handles,
                       map(rna, kmers_of_interest),
@@ -775,11 +776,11 @@ class Bnse:
                       loc=2,
                       borderaxespad=-2.)
             out_plot = self.rdir_path(
-              'plots', 'stream_humps.kmersofinterest.%i.withlegend' % k)
+              'plots', 'stream_curves.kmersofinterest.%i.withlegend' % k)
             print 'saving', out_plot
             rbns_utils.save_fig(fig1, out_plot)
 
-    def plot_enrichment_humps_with_secondary_presence(self):
+    def plot_enrichment_curves_with_secondary_presence(self):
         """
         plots the enrichment of the top kmers into a pdf
         """
@@ -827,7 +828,7 @@ class Bnse:
             fig1.suptitle(self.settings.get_property('experiment_name') + (' k=%i' % k),
               verticalalignment='baseline')
             out_plot = self.rdir_path(
-              'plots', 'presence_humps.kmersofinterest.%i.nolegend' % k)
+              'plots', 'presence_curves.kmersofinterest.%i.nolegend' % k)
             rbns_utils.save_fig(fig1, out_plot)
             sp.legend(legend_handles,
                       map(rna, kmers_of_interest),
@@ -835,7 +836,7 @@ class Bnse:
                       loc=2,
                       borderaxespad=-2.)
             out_plot = self.rdir_path(
-              'plots', 'presence_humps.kmersofinterest.%i.withlegend' % k)
+              'plots', 'presence_curves.kmersofinterest.%i.withlegend' % k)
             print 'saving', out_plot
             rbns_utils.save_fig(fig1, out_plot)
 
@@ -1303,9 +1304,9 @@ class Bnse:
         cPickle.dump(k_lib_ebin2total_counts, open(ebin_counts_file, 'w'))
         return k_lib_ebin2total_counts
 
-    def plot_fold_split_hump(self):
+    def plot_fold_split_curve(self):
         """
-        this is basically the enrichment humps plotter for the
+        this is basically the enrichment curves plotter for the
         reads split by free energy
 
         Only plots the known motif
