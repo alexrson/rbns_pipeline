@@ -1,7 +1,9 @@
 # RNA Bind-n-seq pipeline
 
 
-TODO: write readme
+RNA Bind-n-Seq is a method for measuring the binding affinity of proteins for specific RNA sequences. 
+
+The paper is here: http://www.cell.com/molecular-cell/abstract/S1097-2765%2814%2900327-X 
 
 Installation
 ============
