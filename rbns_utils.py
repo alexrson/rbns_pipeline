@@ -79,7 +79,7 @@ def get_barcode(line):
     """
     extracts the barcode from the first line of a fastq quartet
     """
-    return line.split('#')[-1].split('/')[0]
+    return line.strip().split(':')[-1]
 
 
 def get_index_from_kmer(kmer):
